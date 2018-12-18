@@ -1,0 +1,182 @@
+#!/usr/bin/env node
+
+'use strict';
+
+require('colors');
+
+let Program = require('commander');
+let Readline = require('readline-sync');
+
+
+/*
+ * Usage
+ */
+
+Program.usage('<URL or gid> ... [-p <range>]')
+	.option('    --setting', 'open options menu')
+	.option('')
+	.option('-p, --page [[a]:[b]]', 'only for URL which contains multi pages', arg => {
+		let search = /^([0-9]*):([0-9]*)$/.exec(arg);
+		if (search) {
+			let range = search.splice(1, 2);
+			if (range[0].length == 0) range[0] = 1;
+			else range[0] = parseInt(range[0]);
+			if (range[1].length == 0) range[1] = Infinity;
+			else range[1] = parseInt(range[1]);
+			if (range[0] < range[1]) return range;
+		}
+		console.error('Error argument format <range>.\n'.red);
+		Program.outputHelp();
+		process.exit();
+	}, false)
+	.option('', 'Range example: If an nhentai search result has 100 pages')
+	.option('', '-p 10:20 means from p10 to p20')
+	.option('', '-p :30   means from p1  to p30')
+	.option('', '-p 70:   means from p70 to p100')
+	.option('', '-p       means all pages')
+	.option('')
+	.option('    --conf-loca', 'output the location of config and exit')
+	.version(require('../package.json').version, '-v, --version')
+	.parse(process.argv);
+
+
+/*
+ * Start
+ */
+
+const config = require('../src/config');
+const configObj = config.getConfig();
+const NHentai = require('../src/nhentai');
+const Fse = require('fs-extra');
+
+
+if (Program.setting) setting();
+else if (Program.confLoca) console.log(config.getConfigDir());
+else if (Program.args.length == 0) help();
+else {
+	//配置检查
+	if (!config.check()) {
+		console.log('\nRun ' + 'nhder -h'.yellow + ' for more usage information.\n')
+		process.exit();
+	}
+
+	//信息
+	console.log('\nDownload Path:\t'.cyan + configObj.path.yellow);
+	if (configObj.proxy.length > 0)
+		console.log('Using Proxy:\t'.cyan + configObj.proxy.yellow);
+
+	//开始下载
+	let range = Program.page === true ? [1, Infinity] : Program.page;
+
+	Fse.removeSync(config.getTempDir());
+
+	(async () => {
+		for (let target of Program.args) {
+			await NHentai.download(target, range, config);
+		}
+	})();
+}
+
+
+
+function getStrictIntInput(question, option, limit, limitReply) {
+	let result = Readline.questionInt(question, option);
+	while (!limit(result)) {
+		console.log('\n' + limitReply.bgRed + '\n');
+		result = Readline.questionInt(question, option);
+	}
+	return result;
+}
+
+function help() {
+	console.error("Missing arguments!".bgRed + '\n');
+	Program.outputHelp();
+}
+
+function setting() {
+	let index;
+	do {
+		console.clear();
+		console.log('nhder options'.green);
+
+		let {
+			path,
+			thread,
+			timeout,
+			deduplication,
+			languages,
+			proxy
+		} = configObj;
+
+		let langs = languages.join(', ');
+
+		let options = [
+			'Download path\t'.yellow + (path.length > 0 ? path : 'Null, please set one'.bgRed),
+			'Download thread\t'.yellow + thread,
+			'Download timeout\t'.yellow + timeout + 's',
+			'Deduplication\t'.yellow + (deduplication ? 'Enable' : 'Disable'),
+			'Languages filter\t'.yellow + (langs.length > 0 ? langs : 'Disable'),
+			'Proxy\t\t'.yellow + (proxy.length > 0 ? proxy : 'Disable')
+		];
+		index = Readline.keyInSelect(options, 'Press a key:', {
+			cancel: 'Exit'.bgMagenta
+		});
+		console.log();
+
+		switch (index) {
+			case 0: //下载路径
+				configObj.path = Readline.questionPath('Please input a download path:\n'.yellow, {
+					isDirectory: true,
+					exists: null,
+					cd: false
+				});
+				break;
+
+			case 1: //下载线程
+				configObj.thread = getStrictIntInput('Please input the number of download thread:'.yellow + ' [1~32, default is 8]\n', {
+					defaultInput: 8
+				}, input => (input >= 1 && input <= 32), 'It must be between 1 and 32.');
+				break;
+
+			case 2: //下载超时
+				configObj.timeout = getStrictIntInput('Please input the seconds of download timeout:'.yellow + ' [default is 30]\n', {
+					defaultInput: 30
+				}, input => (input > 0), 'It must be greater than 0.');
+				break;
+
+			case 3: //去重
+				configObj.deduplication = Readline.keyInYNStrict('Do you want to enable deduplication?'.yellow)
+				break;
+
+			case 4: //语言过滤
+				let langs = Readline.question(
+					'Please input languages name '.yellow + 'separated by commas'.green +
+					'\nIf you input nothing, it will be disabled' +
+					'\nExample: '.cyan + 'chinese,japanese,english' +
+					'\nNotice: '.red + 'Priority is affected by order if you enable deduplication\n', {
+						limitMessage: '\nIncorrect format, please re-input.\n'.bgRed,
+						limit: /(^$)|(^[a-zA-Z]+(,[a-zA-Z]+)*$)/
+					});
+				if (langs.length == 0) configObj.languages = [];
+				else configObj.languages = langs.toLowerCase().split(',');
+				break;
+
+			case 5: //代理设置
+				configObj.proxy = Readline.question(
+					'Please input your HTTP/SOCKS proxy like:\n'.yellow +
+					'  <Protocol>://[user:passwd@]<IP>:<Port>\n' +
+					'Such as\n'.yellow +
+					'  http://user:passwd@127.0.0.1:1080\n' +
+					'  socks://127.0.0.1:1080\n' +
+					'If you want to DISABLE it, just input nothing.\n'.yellow, {
+						limitMessage: '\nIncorrect format, please re-input.\n'.bgRed,
+						limit: /(^(http|socks):\/\/(.+@)?((25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))):(([1-9]\d{0,3})|([1-5]\d{4})|(6[0-4]\d{3})|(65[0-4]\d{2})|(655[0-2]\d)|(6553[0-5]))$)|(^$)/
+					});
+				break;
+		} //switch end
+
+		config.saveConfig();
+	} while (index !== -1);
+
+	console.log('Exit'.green);
+}

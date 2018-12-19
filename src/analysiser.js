@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-18 15:37:45
+ * @Last Modified time: 2018-12-20 01:51:00
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
@@ -64,7 +64,7 @@ class Analysiser {
 
 		//first
 		console.log(`  [-]\t${'-'.green}/-\tCollecting ` + 'query='.gray + query + ' page='.gray + start);
-		let firstSearch = await this.callAPI(NHentaiAPI.search(encodeURI(query), start)).then(ret => ret.data);
+		let firstSearch = await this.callAPI(NHentaiAPI.search(encodeURI(decodeURI(query)), start)).then(ret => ret.data);
 		let numPages = firstSearch.num_pages;
 		for (let details of firstSearch.result) {
 			result.push(parseBookDetails(details));

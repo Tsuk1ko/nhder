@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 00:56:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-17 21:32:24
+ * @Last Modified time: 2018-12-20 02:38:00
  */
 
 require('colors');
@@ -69,6 +69,7 @@ class NHDownloader {
 			id,
 			media_id,
 			title,
+			title_dir,
 			num_pages,
 			pages
 		} = book;
@@ -78,7 +79,7 @@ class NHDownloader {
 		let multiThread = new MultiThread(pages, config.thread);
 		return multiThread.run((threadID, filename, index, total) => new Promise(async (resolve, reject) => {
 			let tmpDir = Path.join(tmpDirRoot, `${id}`);
-			let dlDir = Path.join(config.path, `${title} (${id})`);
+			let dlDir = Path.join(config.path, title_dir);
 			let url = `https://i.nhentai.net/galleries/${media_id}/${filename}`;
 			Fse.ensureDirSync(tmpDir);
 			Fse.ensureDirSync(dlDir);

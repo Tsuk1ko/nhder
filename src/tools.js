@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 12:41:48 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-18 17:07:24
+ * @Last Modified time: 2018-12-20 02:35:13
  */
 
 const Fse = require('fs-extra');
@@ -101,15 +101,13 @@ function downloadedFilter(bookList, dlDirRoot) {
 	let fileList = Fse.readdirSync(dlDirRoot);
 	for (let book of bookList) {
 		let {
-			id,
-			title,
+			title_dir,
 			pages
 		} = book;
-		let bookDir = `${title} (${id})`;
 
 		//检查文件夹
-		if (fileList.includes(bookDir)) {
-			let pageList = Fse.readdirSync(Path.join(dlDirRoot, bookDir));
+		if (fileList.includes(title_dir)) {
+			let pageList = Fse.readdirSync(Path.join(dlDirRoot, title_dir));
 			let pageResult = [];
 			//检查页
 			for (let page of pages) {

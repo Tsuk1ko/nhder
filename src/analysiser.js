@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-20 01:51:00
+ * @Last Modified time: 2018-12-20 02:36:29
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
@@ -60,11 +60,12 @@ class Analysiser {
 	 * @memberof Analysiser
 	 */
 	async getBooksFromSearch(query, start = 1, end = 1, thread = 1) {
+		query = decodeURI(query);
 		let result = [];
 
 		//first
 		console.log(`  [-]\t${'-'.green}/-\tCollecting ` + 'query='.gray + query + ' page='.gray + start);
-		let firstSearch = await this.callAPI(NHentaiAPI.search(encodeURI(decodeURI(query)), start)).then(ret => ret.data);
+		let firstSearch = await this.callAPI(NHentaiAPI.search(encodeURI(query), start)).then(ret => ret.data);
 		let numPages = firstSearch.num_pages;
 		for (let details of firstSearch.result) {
 			result.push(parseBookDetails(details));
@@ -137,6 +138,7 @@ function parseBookDetails(details) {
 		media_id,
 		title: japanese,
 		title_pretty: (prePretty + pretty).replace(/[^0-9a-zA-Z]+/g, ' ').trim(),
+		title_dir: japanese.replace(/[/\\:*?"<>|.&\$ ]+/g, ' ') + ` (${id})`,
 		language,
 		num_pages,
 		pages: parsePages

@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-20 02:36:29
+ * @Last Modified time: 2018-12-20 21:54:24
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
@@ -113,6 +113,8 @@ function parseBookDetails(details) {
 		}
 	} = details;
 
+	if (!japanese) japanese = english;
+
 	//图片文件名
 	let parsePages = [];
 	for (let i = 0; i < pages.length; i++) {
@@ -133,11 +135,14 @@ function parseBookDetails(details) {
 	let prePretty = english.split(pretty)[0];
 	if (prePretty == english) prePretty = '';
 
+	let title_pretty = (prePretty + pretty).replace(/[^0-9a-zA-Z]+/g, ' ').trim();
+	if (title_pretty.length == 0) title_pretty = pretty;
+
 	return {
 		id,
 		media_id,
 		title: japanese,
-		title_pretty: (prePretty + pretty).replace(/[^0-9a-zA-Z]+/g, ' ').trim(),
+		title_pretty,
 		title_dir: japanese.replace(/[/\\:*?"<>|.&\$ ]+/g, ' ') + ` (${id})`,
 		language,
 		num_pages,

@@ -70,7 +70,7 @@ nhder options
 [7] Proxy               Disable			# 代理设置
 [0] Exit					# 退出
 
-Press a key [1...6 / 0]:
+Press a key [1...7 / 0]:
 ```
 
 输入数字可进入对应设置项，首次下载之前必须设置下载目录

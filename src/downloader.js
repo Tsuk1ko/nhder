@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 00:56:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-20 02:38:00
+ * @Last Modified time: 2018-12-21 20:01:03
  */
 
 require('colors');
@@ -117,7 +117,7 @@ class NHDownloader {
 			}
 
 			success ? resolve() : reject('Max retry.');
-		}));
+		}), 100);
 	}
 }
 

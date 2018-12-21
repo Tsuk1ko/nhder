@@ -94,6 +94,7 @@ function help() {
 }
 
 function setting() {
+	config.check();
 	let index;
 	do {
 		console.clear();
@@ -102,6 +103,7 @@ function setting() {
 		let {
 			path,
 			thread,
+			api_thread,
 			timeout,
 			deduplication,
 			languages,
@@ -113,6 +115,7 @@ function setting() {
 		let options = [
 			'Download path\t'.yellow + (path.length > 0 ? path : 'Null, please set one'.bgRed),
 			'Download thread\t'.yellow + thread,
+			'Analysis thread\t'.yellow + api_thread,
 			'Download timeout\t'.yellow + timeout + 's',
 			'Deduplication\t'.yellow + (deduplication ? 'Enable' : 'Disable'),
 			'Languages filter\t'.yellow + (langs.length > 0 ? langs : 'Disable'),
@@ -138,17 +141,23 @@ function setting() {
 				}, input => (input >= 1 && input <= 32), 'It must be between 1 and 32.');
 				break;
 
-			case 2: //下载超时
-				configObj.timeout = getStrictIntInput('Please input the seconds of download timeout:'.yellow + ' [default is 30]\n', {
-					defaultInput: 30
+			case 2: //解析线程
+				configObj.api_thread = getStrictIntInput('Please input the number of analysis thread:'.yellow + ' [1~10, default is 5]\n', {
+					defaultInput: 5
+				}, input => (input >= 1 && input <= 8), 'It must be between 1 and 8.');
+				break;
+
+			case 3: //下载超时
+				configObj.timeout = getStrictIntInput('Please input the seconds of download timeout:'.yellow + ' [default is 20]\n', {
+					defaultInput: 20
 				}, input => (input > 0), 'It must be greater than 0.');
 				break;
 
-			case 3: //去重
+			case 4: //去重
 				configObj.deduplication = Readline.keyInYNStrict('Do you want to enable deduplication?'.yellow)
 				break;
 
-			case 4: //语言过滤
+			case 5: //语言过滤
 				let langs = Readline.question(
 					'Please input languages name '.yellow + 'separated by commas'.green +
 					'\nIf you input nothing, it will be disabled' +
@@ -161,7 +170,7 @@ function setting() {
 				else configObj.languages = langs.toLowerCase().split(',');
 				break;
 
-			case 5: //代理设置
+			case 6: //代理设置
 				configObj.proxy = Readline.question(
 					'Please input your HTTP/SOCKS proxy like:\n'.yellow +
 					'  <Protocol>://[user:passwd@]<IP>:<Port>\n' +

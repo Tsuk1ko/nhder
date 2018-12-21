@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-17 18:41:08 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-18 16:55:24
+ * @Last Modified time: 2018-12-21 20:31:46
  */
 
 const Tools = require('./tools');
@@ -18,6 +18,7 @@ async function download(target, range, config) {
 	} = Tools.parseNHURL(target);
 	let {
 		path,
+		api_thread,
 		deduplication,
 		languages
 	} = config.getConfig();
@@ -44,7 +45,7 @@ async function download(target, range, config) {
 				end = page;
 			}
 			console.log();
-			let books = await analysiser.getBooksFromSearch(value, start, end, 5);
+			let books = await analysiser.getBooksFromSearch(value, start, end, api_thread);
 			books = Tools.bookFilter(books, deduplication, languages);
 			books = Tools.downloadedFilter(books, path);
 			if (books.length > 0) {

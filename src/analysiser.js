@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-20 21:54:24
+ * @Last Modified time: 2018-12-21 21:25:46
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
@@ -28,12 +28,15 @@ class Analysiser {
 	}
 
 	callAPI(url) {
-		return this.Axios.get(url).catch(err => {
-			if (err.code == 'ECONNRESET') {
+		return this.Axios.get(url).catch(e => {
+			if (e.code == 'ECONNRESET') {
 				console.error('Connection reset detected.');
 				return this.callAPI(url);
+			} else if (e.response && e.response.status == 503) {
+				console.error('503 error detected, please try to reduce the number of analysis threads in the settings.'.bgRed);
+				process.exit();
 			} else {
-				throw err;
+				throw e;
 			}
 		});
 	}
@@ -85,7 +88,7 @@ class Analysiser {
 				result.push(parseBookDetails(details));
 			}
 			resolve();
-		}));
+		}), 200);
 
 		return result;
 	}

@@ -2,10 +2,14 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 16:03:55 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-17 21:30:00
+ * @Last Modified time: 2018-12-21 20:00:12
  */
 
-const PromiseTry = require("es6-promise-try");
+function sleep(ms) {
+	return new Promise(resolve => {
+		setTimeout(resolve, ms);
+	});
+}
 
 /**
  * 伪多线程
@@ -26,13 +30,14 @@ class MultiThread {
 	}
 
 	/**
-	 * 执行多线程
+	 *	执行多线程
 	 *
 	 * @param {Function} promiseFunc 用于创建Promise实例的函数
+	 * @param {number} [interval=0] 线程建立时间间隔
 	 * @returns Promise.all
 	 * @memberof MultiThread
 	 */
-	run(promiseFunc) {
+	async run(promiseFunc, interval = 0) {
 		if (this.hasRun) return null;
 		this.hasRun = true;
 		let threads = [];
@@ -47,6 +52,7 @@ class MultiThread {
 				}
 				resolve();
 			}));
+			await sleep(interval);
 		}
 		return Promise.all(threads);
 	}

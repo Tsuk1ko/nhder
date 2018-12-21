@@ -63,10 +63,11 @@ nhder options
 
 [1] Download path       F:\nhentai		# 下载目录
 [2] Download thread     16			# 下载线程
-[3] Download timeout    30s			# 下载超时
-[4] Deduplication       Enable			# 去重功能
-[5] Languages filter    chinese, japanese	# 语言过滤
-[6] Proxy               Disable			# 代理设置
+[3] Analysis thread     5			# 解析线程
+[4] Download timeout    30s			# 下载超时
+[5] Deduplication       Enable			# 去重功能
+[6] Languages filter    chinese, japanese	# 语言过滤
+[7] Proxy               Disable			# 代理设置
 [0] Exit					# 退出
 
 Press a key [1...6 / 0]:
@@ -80,6 +81,9 @@ Press a key [1...6 / 0]:
 - **下载线程**  
   即同时下载的图片数，默认为`8`，最小为`1`，最大为`32`  
   下载图片时最左侧的一列实际上就是线程编号
+- **解析线程**  
+  解析多页结果时请求 API 的线程数，默认为`5`，最小为`1`，最大为`10`  
+  如果解析时出现 503 错误请尝试调小此值
 - **下载超时**  
   如果这么多秒之后一张图还没被下载完则算作超时，出现超时或网络错误现象会自动重试，默认值为`30`秒  
   下载图片时如果线程编号是黄色标记的就代表此次是重试  

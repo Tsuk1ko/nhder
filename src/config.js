@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 21:16:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-18 15:11:03
+ * @Last Modified time: 2018-12-21 20:51:34
  */
 
 const Fse = require('fs-extra');
@@ -19,6 +19,7 @@ const tempDir = Path.join(configDir, 'temp');
 const defaultConfig = {
 	path: '',
 	thread: 8,
+	api_thread: 5,
 	timeout: 30,
 	deduplication: true,
 	languages: ['chinese', 'japanese'],
@@ -35,44 +36,29 @@ class Config {
 	}
 
 	check() {
-		let {
-			path,
-			thread,
-			timeout,
-			deduplication,
-			languages,
-			proxy
-		} = this.data;
 		let confErr = false;
 
-		if (typeof path != 'string' || !isValidPath(path)) {
-			this.data.path = defaultConfig.path;
-			confErr = true;
-		}
-		if (typeof thread != 'number') {
-			this.data.thread = defaultConfig.thread;
-			confErr = true;
-		}
-		if (typeof timeout != 'number') {
-			this.data.timeout = defaultConfig.timeout;
-			confErr = true;
-		}
-		if (typeof deduplication != 'boolean') {
-			this.data.deduplication = defaultConfig.deduplication;
-			confErr = true;
-		}
-		if (!Array.isArray(languages)) {
-			this.data.languages = defaultConfig.languages;
-			confErr = true;
-		}
-		if (typeof proxy != 'string') {
-			this.data.proxy = defaultConfig.proxy;
-			confErr = true;
+		for (let key in defaultConfig) {
+			let err = false;
+			switch (key) {
+				case 'languages':
+					if (!Array.isArray(this.data.languages)) err = true;
+					break;
+
+				case 'path':
+					if (!isValidPath(this.data.path)) err = true;
+				default:
+					if (typeof this.data[key] != typeof defaultConfig[key]) err = true;
+			}
+			if (err) {
+				this.data[key] = defaultConfig[key];
+				confErr = true;
+			}
 		}
 
 		if (confErr) {
 			this.saveConfig();
-			console.log('Config error detected, restored them to default.\n'.red);
+			console.log('Config update.'.green);
 		}
 
 		if (this.data.path.length == 0) {

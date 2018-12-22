@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 00:56:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-21 20:01:03
+ * @Last Modified time: 2018-12-22 12:23:45
  */
 
 require('colors');
@@ -96,8 +96,11 @@ class NHDownloader {
 					//文件完整性校验
 					let fileSize = res.headers['content-length'];
 					let dlFile = Path.join(tmpDir, filename);
-					for (let i = 0; i < 15 && !Fse.existsSync(dlFile); i++)
-						await sleep(200); //不明bug处理
+					let waitCnt = 0;
+					do {
+						waitCnt++;
+						await sleep(500);
+					} while (!Fse.existsSync(dlFile) && waitCnt <= 10); //不明bug处理
 					let dlFileSize = Fse.statSync(dlFile).size;
 					if (dlFileSize == fileSize) {
 						Fse.moveSync(dlFile, Path.join(dlDir, filename));

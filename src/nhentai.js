@@ -2,12 +2,13 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-17 18:41:08 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-21 20:31:46
+ * @Last Modified time: 2018-12-22 11:54:57
  */
 
 const Tools = require('./tools');
 const Downloader = require('./downloader');
 const Analysiser = require('./analysiser');
+const Fse = require('fs-extra');
 
 async function download(target, range, config) {
 	if (/^[0-9]+$/.test(target)) target = `https://nhentai.net/g/${parseInt(target)}/`;
@@ -22,6 +23,8 @@ async function download(target, range, config) {
 		deduplication,
 		languages
 	} = config.getConfig();
+
+	Fse.ensureDirSync(path);
 
 	const analysiser = new Analysiser(config.getProxyAgent());
 	const downloader = new Downloader(config, config.getProxyAgent());

@@ -1,6 +1,6 @@
 {
   "name": "nhder",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Download manga from nhentai.net",
   "main": "./src/nhentai.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "pkg . -t node10 --out-path ./build",
-    "build-win": "pkg . -t node10-win-x86,node10-win-x64 --out-path ./build"
+    "build-win": "pkg . -t node10-win-x86 -o ./build/nhder-win-x86.exe & pkg . -t node10-win-x64 -o ./build/nhder-win-x64.exe"
   },
   "repository": {
     "type": "git",

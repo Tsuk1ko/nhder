@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 00:56:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-22 12:23:45
+ * @Last Modified time: 2018-12-27 01:03:56
  */
 
 require('colors');
@@ -76,14 +76,24 @@ class NHDownloader {
 
 		console.log('\n' + String(current).green + `/${total}\t` + `[${id}] `.gray + title + ` (${num_pages} pages)`.yellow);
 
+		let tmpDir = Path.join(tmpDirRoot, `${id}`);
+		let dlDir = Path.join(config.path, title_dir);
+
+		Fse.ensureDirSync(tmpDir);
+		try {
+			Fse.ensureDirSync(dlDir);
+		} catch (e) {
+			if (e.code == 'ENAMETOOLONG') {
+				dlDir = Path.join(config.path, cutStringByTrueLength(title_dir, 255));
+				Fse.ensureDirSync(dlDir);
+			} else {
+				throw e;
+			}
+		}
+
 		let multiThread = new MultiThread(pages, config.thread);
 		return multiThread.run((threadID, filename, index, total) => new Promise(async (resolve, reject) => {
-			let tmpDir = Path.join(tmpDirRoot, `${id}`);
-			let dlDir = Path.join(config.path, title_dir);
 			let url = `https://i.nhentai.net/galleries/${media_id}/${filename}`;
-			Fse.ensureDirSync(tmpDir);
-			Fse.ensureDirSync(dlDir);
-
 			let strTemplet = `\t${String(index).green}/${total}\t${url}`;
 
 			console.log(`  [${threadID}]${strTemplet}`);
@@ -111,7 +121,7 @@ class NHDownloader {
 					}
 				}).catch(e => {
 					success = false;
-					console.error('[ERROR] '.red + e);
+					console.error(`${e}`.red);
 					if (retry + 1 < RETRY_MAX)
 						console.log('  ' + `[${threadID}]`.bgYellow + strTemplet);
 					else
@@ -128,6 +138,23 @@ function sleep(ms) {
 	return new Promise(resolve => {
 		setTimeout(resolve, ms);
 	});
+}
+
+/**
+ * 按 UTF-8 真实长度截取字符串
+ *
+ * @param {string} str 字符串
+ * @param {number} len 目标最大长度
+ * @returns 截取后的字符串
+ */
+function cutStringByTrueLength(str, len) {
+	let trueLen = 0;
+	let i = 0;
+	for (; i < str.length; i++) {
+		str.charCodeAt(i) > 127 ? trueLen += 3 : trueLen++;
+		if (trueLen > len) break;
+	}
+	return str.slice(0, i);
 }
 
 module.exports = NHDownloader;

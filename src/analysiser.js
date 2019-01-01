@@ -2,11 +2,12 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-21 21:25:46
+ * @Last Modified time: 2019-01-01 17:46:14
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
 const MultiThread = require('./multi-thread');
+const OS = require('os');
 
 const EXT = {
 	j: 'jpg',
@@ -141,16 +142,45 @@ function parseBookDetails(details) {
 	let title_pretty = (prePretty + pretty).replace(/[^0-9a-zA-Z]+/g, ' ').trim();
 	if (title_pretty.length == 0) title_pretty = pretty;
 
+	//系统限制的文件名最大长度
+	let title_dir = japanese.replace(/[/\\:*?"<>|.&$ ]+/g, ' ') + ` (${id})`;
+	switch (OS.platform()) {
+		case 'win32':
+		case 'darwin':
+			break;
+		default:
+			title_dir = cutStringByUTF8Length(title_dir, 249);
+			break;
+	}
+
 	return {
 		id,
 		media_id,
 		title: japanese,
 		title_pretty,
-		title_dir: japanese.replace(/[/\\:*?"<>|.&\$ ]+/g, ' ') + ` (${id})`,
+		title_dir,
 		language,
 		num_pages,
 		pages: parsePages
 	};
+}
+
+/**
+ * 按 UTF-8 真实长度截取字符串
+ *
+ * @param {string} str 字符串
+ * @param {number} len 目标最大长度
+ * @returns 截取后的字符串
+ */
+function cutStringByUTF8Length(str, len) {
+	let trueLen = 0;
+	let i = 0;
+	for (; i < str.length; i++) {
+		str.charCodeAt(i) > 127 ? trueLen += 3 : trueLen++;
+		if (trueLen > len) break;
+	}
+	if (trueLen > len) return str.slice(0, i);
+	return str;
 }
 
 module.exports = Analysiser;

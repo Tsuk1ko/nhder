@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 00:56:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-27 01:03:56
+ * @Last Modified time: 2019-01-01 17:46:25
  */
 
 require('colors');
@@ -80,16 +80,7 @@ class NHDownloader {
 		let dlDir = Path.join(config.path, title_dir);
 
 		Fse.ensureDirSync(tmpDir);
-		try {
-			Fse.ensureDirSync(dlDir);
-		} catch (e) {
-			if (e.code == 'ENAMETOOLONG') {
-				dlDir = Path.join(config.path, cutStringByTrueLength(title_dir, 255));
-				Fse.ensureDirSync(dlDir);
-			} else {
-				throw e;
-			}
-		}
+		Fse.ensureDirSync(dlDir);
 
 		let multiThread = new MultiThread(pages, config.thread);
 		return multiThread.run((threadID, filename, index, total) => new Promise(async (resolve, reject) => {
@@ -138,23 +129,6 @@ function sleep(ms) {
 	return new Promise(resolve => {
 		setTimeout(resolve, ms);
 	});
-}
-
-/**
- * 按 UTF-8 真实长度截取字符串
- *
- * @param {string} str 字符串
- * @param {number} len 目标最大长度
- * @returns 截取后的字符串
- */
-function cutStringByTrueLength(str, len) {
-	let trueLen = 0;
-	let i = 0;
-	for (; i < str.length; i++) {
-		str.charCodeAt(i) > 127 ? trueLen += 3 : trueLen++;
-		if (trueLen > len) break;
-	}
-	return str.slice(0, i);
 }
 
 module.exports = NHDownloader;

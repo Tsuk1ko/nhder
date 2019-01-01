@@ -1,6 +1,6 @@
 {
   "name": "nhder",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Download manga from nhentai.net",
   "main": "./src/nhentai.js",
   "bin": {

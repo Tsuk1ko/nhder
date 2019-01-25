@@ -1,6 +1,8 @@
 # nhder
 一个含有语言过滤和智能去重功能的 nhentai 本子下载器
 
+**该项目当前不可用，详见 https://github.com/Tsuk1ko/nhder/issues/1**
+
 ![](https://i.loli.net/2018/12/18/5c18cf206615e.gif)
 
 ## 为什么需要这个？

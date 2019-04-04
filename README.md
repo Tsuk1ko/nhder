@@ -1,18 +1,24 @@
 # nhder
+
 一个含有语言过滤和智能去重功能的 nhentai 本子下载器
 
-**该项目当前不可用，详见 https://github.com/Tsuk1ko/nhder/issues/1**
+**该项目当前不可用，详见 [issues#1](https://github.com/Tsuk1ko/nhder/issues/1)**
+
+**可用 [nhentai-helper](https://github.com/Tsuk1ko/nhentai-helper) 作为替代**
 
 ![](https://i.loli.net/2018/12/18/5c18cf206615e.gif)
 
 ## 为什么需要这个？
+
 1. nhentai 本身提供的下载方式只有种子下载，速度堪忧，且需要登录
 2. 为了批量下载喜欢的题材或画师的本子
 
 该项目的定位是**下载器**，而不是爬虫，我**不推荐**也**不赞同**使用该程序进行过量的下载，并且过量下载会导致出现验证码问题而无法继续下载
 
 ## 安装
+
 ### 方法一：直接下载编译好的可执行文件
+
 到 [releases](https://github.com/Tsuk1ko/nhder/releases) 下载对应平台（只有部分）的可执行文件
 
 - **Windows**  
@@ -25,26 +31,28 @@
 版本更新的话重复上述操作即可
 
 ### 方法二：通过 nodejs 安装
+
 首先安装 Nodejs
 
 - **Windows**  
   打开[官网](https://nodejs.org) => 下载右边的“最新发布版” => 安装一路确定
 - **Linux**
-	```bash
-	# Ubuntu
-	curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-	sudo apt-get install -y nodejs
+  ```bash
+  # Ubuntu
+  curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+   apt-get install -y nodejs
 
-	# Debian
-	curl -sL https://deb.nodesource.com/setup_10.x | bash -
-	apt-get install -y nodejs
+  # Debian
+  curl -sL https://deb.nodesource.com/setup_10.x | bash -
+  apt-get install -y nodejs
 
-	# Centos
-	curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-	yum install nodejs -y
-	```
+  # Centos
+  curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+  yum install nodejs -y
+  ```
 
 然后执行命令
+
 ```bash
 npm i -g nhder
 ```
@@ -54,13 +62,14 @@ npm i -g nhder
 版本更新的话也是执行上面这句命令即可
 
 ## 设置
+
 ```bash
 nhder --setting
 ```
 
 将看到以下界面
 
-```
+```text
 nhder options
 
 [1] Download path       F:\nhentai		# 下载目录
@@ -103,7 +112,9 @@ Press a key [1...7 / 0]:
   - `socks://127.0.0.1:1080`（如果你使用小飞机则直接填这个，除非你改过本地端口）
 
 ## 使用
+
 ### 下载单个本子
+
 ```bash
 nhder https://nhentai.net/g/255771/
 # 或
@@ -111,6 +122,7 @@ nhder 255771
 ```
 
 ### 下载一个分类或搜索页面中的本子
+
 ```bash
 # 默认会下载第一页
 nhder https://nhentai.net/tag/lolicon/
@@ -125,6 +137,7 @@ nhder "https://nhentai.net/search/?q=c94+chinese&page=2"
 另外，你也可以使用`-p`参数来对这种可翻页的页面指定下载全部或部分页面，此时会忽略链接中的 page 字段
 
 格式为`-p start:end`，表示下载 [start, end] 页数范围的所有本子；start 与 end 可以不填，此时默认 start 为 1，end 为最大页数；`-p`与`-p :`是一样的，但如果你直接使用`-p`，则必须将其放到命令的最末端
+
 ```bash
 # 下载 10~20页
 nhder https://nhentai.net/tag/lolicon/ -p 10:20
@@ -140,7 +153,9 @@ nhder https://nhentai.net/tag/lolicon/ -p
 ```
 
 ### 组合下载
+
 可以填入多个 URL 或 gid，程序会顺次下载
+
 ```bash
 nhder 255771 256015 https://nhentai.net/tag/lolicon/ https://nhentai.net/search/?q=fgo
 ```
@@ -148,14 +163,8 @@ nhder 255771 256015 https://nhentai.net/tag/lolicon/ https://nhentai.net/search/
 这时也可以使用上面提到的`-p`参数，并且会对所有分类或搜索页的输入起效
 
 ## 其他说明
+
 1. 支持断点续下，精确到本子的页
 2. 由于程序运行时有下载临时文件清理机制，请勿多开
 3. 其实 nhentai 搜索有许多语法，请参考 https://nhentai.net/info/  
    最基础的是用空格隔开关键字，例如搜索东方的汉化本可以搜索`touhou chinese`，而不是仅搜索`touhou`然后依靠本程序的语言过滤，效率有天壤之别
-
-## 捐赠
-| 支付宝 | 微信 |
-|:-:|:-:|
-| ![](https://i.loli.net/2018/12/18/5c18cbe8535f2.gif) | ![](https://i.loli.net/2018/12/18/5c18cbe3a9cb7.png) |
-
-感谢每一位捐赠者 XD

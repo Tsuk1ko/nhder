@@ -3,6 +3,7 @@
 'use strict';
 
 require('colors');
+const CheckUpdate = require('../src/checkUpdate');
 
 let Program = require('commander');
 let Readline = require('readline-sync');
@@ -52,11 +53,9 @@ const Fse = require('fs-extra');
 
 if (Program.setting) setting();
 else if (Program.confLoca) console.log(config.getConfigDir());
-else if (Program.args.length == 0) help();
 else {
 	//配置检查
 	if (!config.check()) {
-		console.log('\nRun ' + 'nhder -h'.yellow + ' for more usage information.\n')
 		process.exit();
 	}
 
@@ -71,8 +70,20 @@ else {
 	Fse.removeSync(config.getTempDir());
 
 	(async () => {
-		for (let target of Program.args) {
-			await NHentai.download(target, range, config);
+		if (Program.args.length == 0) help();
+		else
+			for (let target of Program.args) {
+				await NHentai.download(target, range, config);
+			}
+
+		console.log();
+
+		//检查更新
+		CheckUpdate.init();
+		let laterVersion = await CheckUpdate.check();
+		if (laterVersion) {
+			console.log(`New version ${laterVersion.yellow} is available.`);
+			console.log(`You can upgrade via the '${'npm i -g nhder'.yellow}' command.\n`);
 		}
 	})();
 }
@@ -89,7 +100,7 @@ function getStrictIntInput(question, option, limit, limitReply) {
 }
 
 function help() {
-	console.error("Missing arguments!".bgRed + '\n');
+	console.error('\n' + "Missing arguments!".bgRed + '\n');
 	Program.outputHelp();
 }
 
@@ -154,7 +165,7 @@ function setting() {
 				break;
 
 			case 4: //去重
-				configObj.deduplication = Readline.keyInYNStrict('Do you want to enable deduplication?'.yellow)
+				configObj.deduplication = Readline.keyInYNStrict('Do you want to enable deduplication?'.yellow);
 				break;
 
 			case 5: //语言过滤

@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-16 12:41:48 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-20 02:35:13
+ * @Last Modified time: 2019-04-16 13:15:07
  */
 
 const Fse = require('fs-extra');
@@ -30,7 +30,7 @@ function parseNHURL(url) {
 		if (search) {
 			type = 's';
 			value = search[1];
-			page = search[4]
+			page = search[4];
 		} else {
 			return false;
 		}

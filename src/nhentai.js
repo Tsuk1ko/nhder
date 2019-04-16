@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-17 18:41:08 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-22 11:54:57
+ * @Last Modified time: 2019-04-16 13:15:02
  */
 
 const Tools = require('./tools');
@@ -65,4 +65,4 @@ async function download(target, range, config) {
 
 module.exports = {
 	download
-}
+};

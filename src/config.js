@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 21:16:02 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2018-12-21 20:51:34
+ * @Last Modified time: 2019-04-16 13:39:25
  */
 
 const Fse = require('fs-extra');
@@ -47,6 +47,7 @@ class Config {
 
 				case 'path':
 					if (!isValidPath(this.data.path)) err = true;
+
 				default:
 					if (typeof this.data[key] != typeof defaultConfig[key]) err = true;
 			}
@@ -56,15 +57,15 @@ class Config {
 			}
 		}
 
-		if (confErr) {
+		/*if (confErr) {
 			this.saveConfig();
 			console.log('Config update.'.green);
-		}
+		}*/
 
 		if (this.data.path.length == 0) {
 			console.error('You must set download path first!'.red + '\nTry ' + 'nhder --setting'.yellow);
 			return false;
-		};
+		}
 
 		return true;
 	}

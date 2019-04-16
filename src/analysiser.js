@@ -2,7 +2,7 @@
  * @Author: Jindai Kirin 
  * @Date: 2018-12-15 23:04:25 
  * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2019-01-01 17:46:14
+ * @Last Modified time: 2019-04-16 12:59:36
  */
 
 const NHentaiAPI = new(require('nhentai-api'))();
@@ -13,7 +13,7 @@ const EXT = {
 	j: 'jpg',
 	p: 'png',
 	g: 'gif'
-}
+};
 
 /**
  * nhentai解析
@@ -143,7 +143,7 @@ function parseBookDetails(details) {
 	if (title_pretty.length == 0) title_pretty = pretty;
 
 	//系统限制的文件名最大长度
-	let title_dir = japanese.replace(/[/\\:*?"<>|.&$ ]+/g, ' ') + ` (${id})`;
+	let title_dir = japanese.replace(/[\/\\:*?"<>|.&$ ]+/g, ' ') + ` (${id})`;
 	switch (OS.platform()) {
 		case 'win32':
 		case 'darwin':
@@ -176,7 +176,7 @@ function cutStringByUTF8Length(str, len) {
 	let trueLen = 0;
 	let i = 0;
 	for (; i < str.length; i++) {
-		str.charCodeAt(i) > 127 ? trueLen += 3 : trueLen++;
+		str.charCodeAt(i) > 127 ? (trueLen += 3) : (trueLen++);
 		if (trueLen > len) break;
 	}
 	if (trueLen > len) return str.slice(0, i);

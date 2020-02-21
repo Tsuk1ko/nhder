@@ -143,7 +143,7 @@ function parseBookDetails(details) {
 	if (title_pretty.length == 0) title_pretty = pretty;
 
 	//系统限制的文件名最大长度
-	let title_dir = japanese.replace(/[\/\\:*?"<>|.&$ ]+/g, ' ') + ` (${id})`;
+	let title_dir = japanese.replace(/[\/\\:*?"<>|.&$ \t\r\n]+/g, ' ') + ` (${id})`;
 	switch (OS.platform()) {
 		case 'win32':
 		case 'darwin':

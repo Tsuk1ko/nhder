@@ -3,7 +3,6 @@
 'use strict';
 
 require('colors');
-const CheckUpdate = require('../src/checkUpdate');
 
 let Program = require('commander');
 let Readline = require('readline-sync');
@@ -77,14 +76,6 @@ else {
 			}
 
 		console.log();
-
-		//检查更新
-		CheckUpdate.init();
-		let laterVersion = await CheckUpdate.check();
-		if (laterVersion) {
-			console.log(`New version ${laterVersion.yellow} is available.`);
-			console.log(`You can upgrade via the '${'npm i -g nhder'.yellow}' command.\n`);
-		}
 	})();
 }
 

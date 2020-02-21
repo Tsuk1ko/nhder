@@ -1,10 +1,3 @@
-/*
- * @Author: Jindai Kirin 
- * @Date: 2018-12-15 21:16:02 
- * @Last Modified by: Jindai Kirin
- * @Last Modified time: 2019-04-16 13:39:25
- */
-
 const Fse = require('fs-extra');
 const Path = require('path');
 const SocksProxyAgent = require('socks-proxy-agent');
@@ -36,8 +29,6 @@ class Config {
 	}
 
 	check() {
-		let confErr = false;
-
 		for (let key in defaultConfig) {
 			let err = false;
 			switch (key) {
@@ -56,11 +47,6 @@ class Config {
 				confErr = true;
 			}
 		}
-
-		/*if (confErr) {
-			this.saveConfig();
-			console.log('Config update.'.green);
-		}*/
 
 		if (this.data.path.length == 0) {
 			console.error('You must set download path first!'.red + '\nTry ' + 'nhder --setting'.yellow);
